@@ -1,0 +1,114 @@
+{% load static %}
+<!doctype html>
+  <head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <title>Home page</title>
+  
+  
+  </head>
+  <body>
+      <b>Hello {{ request.session.user_name }}</b>
+      <a href="{% url 'logout' %}">Logout </a>
+      <div id="wrapper">
+        <form action="" method="post">
+            {% csrf_token %}
+            <fieldset>
+                <legend>Add twitter URL for Reply Analysis</legend>
+                <div>
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                                {% for error in form.errors %}
+                                    <li> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    
+                        {% if errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                                <li> {{ errors }}</li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                        {% if success %}
+                        <div class="alert alert-success">
+                            <ul>
+                                <li> {{ success }}</li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                </div>
+                {% for element in form %}
+                        <div>
+                            <input type="text" name={{ element.name }} placeholder="{{ element.label }}"/>
+                        </div>
+                {% endfor %}
+                <input type="submit" name="submit" value="Send"/>
+            </fieldset>
+        </form>
+      </div>
+      <div id="wrapper2">
+        {% csrf_token %}
+        <fieldset>
+            <legend>Previous Tweets Summary Data</legend>
+            <table width ="100%" border =1>
+                <tr align="center">
+                    <th>
+                        Twitter's Url
+                    </th>
+                    <th>
+                        Positive
+                    </th>
+                    <th>
+                        Negative
+                    </th>
+                    <th>
+                        Neutral
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        More Details
+                    </th>
+                    <th>
+                        Request Created At
+                    </th>
+                    <th>
+                        Request Updated At
+                    </th>
+                </tr>
+                {% if  message %}
+                    <tr>
+                        <td colspan="7"> <center> {{ message }} </center></td>
+                    </tr>
+                {% else %}
+                    {% for x in tweet_data %}
+                        <tr align="center">
+                            <td> {{ x.twitter_url }}</td>
+                            <td> {{ x.twitter_positive_percentage }}</td>
+                            <td> {{ x.twitter_negative_percentage }}</td>
+                            <td> {{ x.twitter_neutral_percentage }}</td>
+                            <td> {{ x.analysis_status }}</td>
+                            <td> <a href="{% url 'summary' %}?tweet_id={{ x.twitter_id }}"> Summary </a></td>
+                            <td> {{ x.analysis_created_at }}</td>
+                            <td> {{ x.analysis_updated_at }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+                
+
+                
+            </table>
+        </fieldset>
+        
+        
+      </div>
+    </body>
+</html>

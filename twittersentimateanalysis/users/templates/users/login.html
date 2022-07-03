@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Registration</title>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+    <body>
+           <div id="wrapper">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <fieldset>
+                        <legend>Login Form</legend>
+                        <div>
+                            {% if form.errors %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        {% for error in form.errors %}
+                                            <li> {{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            
+                                {% if errors %}
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        <li> {{ errors }}</li>
+                                    </ul>
+                                </div>
+                                {% endif %}
+                                
+                                {% if success %}
+                                <div class="alert alert-success">
+                                    <ul>
+                                        <li> {{ success }}</li>
+                                    </ul>
+                                </div>
+                                {% endif %}
+                        </div>
+                        {% for element in form %}
+                            {% if element.name == "userPwd" %}
+                                <div>
+                                    <input type="password" name={{ element.name }} placeholder="{{ element.label }}"/>
+                                </div>
+                            {% else %}
+                                <div>
+                                    <input type="text" name={{ element.name }} placeholder="{{ element.label }}"/>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <input type="submit" name="submit" value="Send"/>
+                        <div>
+                            
+                        </div>Not registered? <a href="{% url 'register' %}">Click here </a>
+                    </fieldset>    
+                </form>
+                
+            </div>
+    </body>
+
+</html>

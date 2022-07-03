@@ -1,0 +1,139 @@
+{% load static %}
+<!doctype html>
+  <head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <title>Twiiter Summaary Data {{ tweet_data.twitter_id }} </title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-v4-grid-only@1.0.0/dist/bootstrap-grid.min.css">
+  
+  </head>
+  <body>
+      <b>Hello {{ request.session.user_name }}</h3>
+      <a href="{% url 'logout' %}">Logout </a>
+      <div id="wrapper2">
+        
+        <fieldset>
+            <legend>Tweets Summary Data</legend>
+            <table>
+              <tr>
+                <td>
+                  <h3>Tweet ID:</h3>
+                </td>
+                <td>
+                  {{ tweet_data.twitter_id }}
+                </td>
+                <td rowspan="8" valign="top">
+                  <canvas id="chart" width="500" height="500"></canvas>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <h3>Tweet URL:</h3>
+                </td>
+                <td>
+                  {{ tweet_data.twitter_url }}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <h3>Request Created At:</h3>
+                </td>
+                <td>
+                  {{ tweet_data.analysis_created_at }}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <h3>Request Updated At:</h3>
+                </td>
+                <td>
+                  {{ tweet_data.analysis_updated_at }}
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <h3>Analysis Status:</h3>
+                </td>
+                <td>
+                  {{ tweet_data.analysis_status }}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <h3>Positive Reply  Summary ({{ tweet_data.twitter_positive_percentage }}%):</h3>
+               
+                  {% if positive_data %}
+                    {{positive_data|unordered_list}}
+                  {% else %}
+                    No Positive Summaries
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <h3>Negative Reply  Summary ({{ tweet_data.twitter_negative_percentage }}%):</h3>
+               
+                  {% if negative_data %}
+                    {{negative_data|unordered_list}}
+                  {% else %}
+                    No Negative Summaries
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <h3>Neutral Reply  Summary ({{ tweet_data.twitter_neutral_percentage  }}%):</h3>
+               
+                  {% if neutral_data %}
+                    {{neutral_data|unordered_list}}
+                  {% else %}
+                    No Neutral Summaries
+                  {% endif %}
+                </td>
+              </tr>
+            </table>
+        </fieldset>
+      </div>
+    </body>
+    <script>
+      // jquery function
+      $(document).ready(function(){
+              var ctx = document.getElementById('chart').getContext('2d');
+              var chart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Positive', 'Negative', 'Neutral'],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: [{{ tweet_data.twitter_positive_percentage }}, {{ tweet_data.twitter_negative_percentage }},{{ tweet_data.twitter_neutral_percentage }}],
+                        backgroundColor: [
+                            '#006400',
+                            '#ff1111',
+                            '#555555'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+          })
+      </script>
+</html>
