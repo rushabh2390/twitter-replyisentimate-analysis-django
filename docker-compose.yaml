@@ -1,0 +1,43 @@
+version: "3.8"
+   
+services:
+  redis:
+    image: cfe-redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+  web:
+    build: ./twittersentimateanalysis
+    command: bash -c "python manage.py makemigrations && \
+              python manage.py migrate && \
+              python manage.py initadmin && \
+              python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./twittersentimateanalysis/:/usr/src/app/
+    ports:
+      - 8000:8000
+    environment:
+      - DJANGO_SUPERUSER_PASSWORD=admin
+      - DJANGO_SUPERUSER_EMAIL=example@example.com
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+  celery:
+    build: ./twittersentimateanalysis
+    command: bash -c "python manage.py nltkpackagedownload && celery -A twittersentimateanalysis worker -l info"
+    volumes:
+      - ./twittersentimateanalysis/:/usr/src/app/
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+  celery-beat:
+    build: ./twittersentimateanalysis
+    command: celery -A twittersentimateanalysis beat -l info
+    volumes:
+      - ./twittersentimateanalysis/:/usr/src/app/
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
