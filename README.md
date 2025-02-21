@@ -39,7 +39,7 @@ celery -A twittersentimateanalysis beat -l info
 
 8. Now run this project with.
 ```
-python manage.py runservere
+python manage.py runserver
 ```
 Please create a new user and from going [register](http://localhost:8000/register)  and [login](http://localhost:8000/login)
 
